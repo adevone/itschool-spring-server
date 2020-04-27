@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*
 data class Product(
     val id: String,
     val name: String,
+    val price: Money,
+    val discountPercent: Int,
     val description: String,
     val imageUrl: String,
     val attributes: List<Attribute>
@@ -16,11 +18,15 @@ data class Product(
     )
 }
 
+typealias Money = Double
+
 private val productListsByAuthor = mapOf(
     "default" to listOf(
         Product(
             id = "1",
             name = "Mrkvkv",
+            price = 123.5,
+            discountPercent = 15,
             description = "Морковка немытая",
             imageUrl = "https://i.pinimg.com/originals/3e/50/d3/3e50d3c1231de7f7105e017a2ee85874.jpg",
             attributes = listOf(
@@ -37,6 +43,8 @@ private val productListsByAuthor = mapOf(
         Product(
             id = "1",
             name = "Kotoshkv",
+            price = 312.7,
+            discountPercent = 25,
             description = "Картошка белая",
             imageUrl = "https://memepedia.ru/wp-content/uploads/2019/07/chilipizdrik-14-360x270.jpg",
             attributes = listOf(
