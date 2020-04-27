@@ -1,0 +1,3 @@
+rootProject.name = 'itschool-spring-server'
+
+include(":app")
