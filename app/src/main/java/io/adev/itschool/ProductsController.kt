@@ -86,6 +86,16 @@ class ProductsController {
         }
     }
 
+    @GetMapping("/products/hints/{author}/{query}/{maxSize}")
+    fun getHints(@PathVariable author: String, @PathVariable query: String, @PathVariable maxSize: Int): List<String> {
+        if(productListsByAuthor.containsKey(author)){
+            return productListsByAuthor[author]?.filter { it.name.contains(query) }?.map { it.name }?.take(maxSize) ?: listOf()
+        }
+        else{
+            throw NotFoundException(author, "Author not found $author")
+        }
+    }
+
     @ExceptionHandler(NotFoundException::class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
