@@ -1,7 +1,14 @@
 package io.adev.itschool
 
+import io.adev.itschool.data.SukharevAntonDataset
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import java.util.*
+
+data class Category(
+        val name: String,
+        val products: List<Product>
+)
 
 data class Product(
     val id: String,
@@ -19,6 +26,11 @@ data class Product(
 }
 
 typealias Money = Double
+
+private val productsListByAuthorCategory = mapOf(
+        "Sukharev" to SukharevAntonDataset().getData()
+)
+
 
 private val productListsByAuthor = mapOf(
     "default" to listOf(
@@ -67,6 +79,11 @@ class ProductsController {
     @GetMapping("products/all/{author}")
     fun all(@PathVariable author: String): List<Product> {
         return productListsByAuthor[author] ?: throw NoAuthorException(author)
+    }
+
+    @GetMapping("products/allWithCategories/{author}/")
+    fun allWithCategories(@PathVariable author: String): List<Category> {
+        return productsListByAuthorCategory[author] ?: throw NoAuthorException(author)
     }
 
     @ExceptionHandler(NoAuthorException::class)
