@@ -31,8 +31,8 @@ private val productsListByAuthorCategory = mapOf(
 )
 
 
-private val productListsByAuthor = mapOf(
-        "default" to listOf(
+private val productListsByAuthor = mutableMapOf(
+        "default" to mutableListOf(
                 Product(
                         id = "1",
                         name = "Mrkvkv",
@@ -52,7 +52,7 @@ private val productListsByAuthor = mapOf(
                         )
                 ),
                 Product(
-                        id = "1",
+                        id = "2",
                         name = "Kotoshkv",
                         price = 312.7,
                         discountPercent = 25,
@@ -85,22 +85,56 @@ class ProductsController {
         return productsListByAuthorCategory[author] ?: throw NoAuthorException(author)
     }
 
-    @ExceptionHandler(NoAuthorException::class)
+    @PostMapping("products/all/{author}/")
+    fun addProduct(@PathVariable author: String, @RequestBody product: Product) {
+        if (productListsByAuthor.containsKey(author)) {
+            productListsByAuthor[author]!!.add(product)
+        } else {
+            productListsByAuthor[author] = mutableListOf(product)
+        }
+    }
+
+    @GetMapping("products/hints/{author}/{query}/{maxSize}")
+    fun getHints(@PathVariable author: String, @PathVariable query: String, @PathVariable maxSize: Int): List<String> {
+        val itemsByAuthor = productListsByAuthor[author] ?: throw NoAuthorException(author)
+
+        return itemsByAuthor.mapNotNull {
+            if (it.name.toLowerCase().contains(query.toLowerCase()))
+                it.name
+            else
+                null
+        }.take(maxSize)
+    }
+
+    @GetMapping("products/all/{author}/{id}")
+    fun getById(@PathVariable author: String, @PathVariable id: Int): Product{
+        val itemsByAuthor = productListsByAuthor[author] ?: throw NoAuthorException(author)
+
+        return itemsByAuthor.firstOrNull { it.id == id.toString() }
+                ?: throw NotFoundedException(id.toString(), "Product not founded $id")
+    }
+
+    @ExceptionHandler(NotFoundedException::class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
-    fun handleException(e: NoAuthorException): NoAuthorException.Response {
+    fun handleException(e: NotFoundedException): NotFoundedException.Response {
         return e.toResponse()
     }
 }
 
-class NoAuthorException(
-        private val name: String
-) : RuntimeException("no author with name=$name") {
+open class NotFoundedException(
+        private val notFounded: String,
+        private val errorMessage: String
+) : RuntimeException(errorMessage) {
 
     data class Response(
             val name: String,
             val message: String
     )
 
-    fun toResponse() = Response(name, message!!)
+    fun toResponse() = Response(notFounded, errorMessage)
 }
+
+class NoAuthorException(
+        name: String
+) : NotFoundedException(name, "Author not found $name")
