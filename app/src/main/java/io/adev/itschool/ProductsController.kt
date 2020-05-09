@@ -1,6 +1,7 @@
 package io.adev.itschool
 
 import io.adev.itschool.data.SukharevAntonDataset
+import io.adev.itschool.data.ZinevichYanDataset
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.util.concurrent.ConcurrentHashMap
@@ -11,6 +12,19 @@ data class Category(
     val products: List<Product>
 )
 
+
+
+data class SubCategory(
+    val name: String,
+    val mainCategory: MainCategory
+)
+
+data class MainCategory(
+    val name: String
+){
+    constructor() : this("")
+}
+
 data class Product(
     val id: String,
     val name: String,
@@ -20,6 +34,9 @@ data class Product(
     val imageUrl: String,
     val attributes: List<Attribute>
 ) {
+    var category: SubCategory? = null
+    val otherPhotos: MutableList<String> = mutableListOf()
+
     data class Attribute(
         val name: String,
         val value: String
@@ -73,7 +90,9 @@ val productListsByAuthor = ConcurrentHashMap<String, CopyOnWriteArrayList<Produc
                     )
                 )
             )
-        )
+        ),
+
+        "Zinevich" to ZinevichYanDataset().getData()
     )
 )
 
@@ -112,11 +131,11 @@ class ProductsController {
     }
 
     @GetMapping("products/all/{author}/{id}")
-    fun getById(@PathVariable author: String, @PathVariable id: Int): Product {
+    fun getById(@PathVariable author: String, @PathVariable id: String): Product {
         val itemsByAuthor = productListsByAuthor[author] ?: throw NoAuthorException(author)
 
-        return itemsByAuthor.firstOrNull { it.id == id.toString() }
-            ?: throw NotFoundedException(id.toString(), "Product not founded $id")
+        return itemsByAuthor.firstOrNull { it.id == id }
+            ?: throw NotFoundedException(id, "Product not founded $id")
     }
 
     @ExceptionHandler(NotFoundedException::class)
