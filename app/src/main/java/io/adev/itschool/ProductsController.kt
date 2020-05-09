@@ -3,73 +3,78 @@ package io.adev.itschool
 import io.adev.itschool.data.SukharevAntonDataset
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 data class Category(
-        val name: String,
-        val products: List<Product>
+    val name: String,
+    val products: List<Product>
 )
 
 data class Product(
-        val id: String,
-        val name: String,
-        val price: Money,
-        val discountPercent: Int,
-        val description: String,
-        val imageUrl: String,
-        val attributes: List<Attribute>
+    val id: String,
+    val name: String,
+    val price: Money,
+    val discountPercent: Int,
+    val description: String,
+    val imageUrl: String,
+    val attributes: List<Attribute>
 ) {
     data class Attribute(
-            val name: String,
-            val value: String
+        val name: String,
+        val value: String
     )
 }
 
 typealias Money = Double
 
 private val productsListByAuthorCategory = mapOf(
-        "Sukharev" to SukharevAntonDataset().getData()
+    "Sukharev" to SukharevAntonDataset().getData()
 )
 
-
-private val productListsByAuthor = mutableMapOf(
-        "default" to mutableListOf(
+val productListsByAuthor = ConcurrentHashMap<String, CopyOnWriteArrayList<Product>>(
+    mapOf(
+        "default" to CopyOnWriteArrayList(
+            listOf(
                 Product(
-                        id = "1",
-                        name = "Mrkvkv",
-                        price = 123.5,
-                        discountPercent = 15,
-                        description = "Морковка немытая",
-                        imageUrl = "https://i.pinimg.com/originals/3e/50/d3/3e50d3c1231de7f7105e017a2ee85874.jpg",
-                        attributes = listOf(
-                                Product.Attribute(
-                                        name = "Качество",
-                                        value = "Наивысшее"
-                                ),
-                                Product.Attribute(
-                                        name = "Производитель",
-                                        value = "The Grandma Inc."
-                                )
+                    id = "1",
+                    name = "Mrkvkv",
+                    price = 123.5,
+                    discountPercent = 15,
+                    description = "Морковка немытая",
+                    imageUrl = "https://i.pinimg.com/originals/3e/50/d3/3e50d3c1231de7f7105e017a2ee85874.jpg",
+                    attributes = listOf(
+                        Product.Attribute(
+                            name = "Качество",
+                            value = "Наивысшее"
+                        ),
+                        Product.Attribute(
+                            name = "Производитель",
+                            value = "The Grandma Inc."
                         )
+                    )
                 ),
                 Product(
-                        id = "2",
-                        name = "Kotoshkv",
-                        price = 312.7,
-                        discountPercent = 25,
-                        description = "Картошка белая",
-                        imageUrl = "https://memepedia.ru/wp-content/uploads/2019/07/chilipizdrik-14-360x270.jpg",
-                        attributes = listOf(
-                                Product.Attribute(
-                                        name = "Качество",
-                                        value = "Наивысшайшее"
-                                ),
-                                Product.Attribute(
-                                        name = "Производитель",
-                                        value = "The Grandma Inc."
-                                )
+                    id = "2",
+                    name = "Kotoshkv",
+                    price = 312.7,
+                    discountPercent = 25,
+                    description = "Картошка белая",
+                    imageUrl = "https://memepedia.ru/wp-content/uploads/2019/07/chilipizdrik-14-360x270.jpg",
+                    attributes = listOf(
+                        Product.Attribute(
+                            name = "Качество",
+                            value = "Наивысшайшее"
+                        ),
+                        Product.Attribute(
+                            name = "Производитель",
+                            value = "The Grandma Inc."
                         )
+                    )
                 )
+            )
         )
+    )
 )
 
 @RestController
@@ -90,7 +95,7 @@ class ProductsController {
         if (productListsByAuthor.containsKey(author)) {
             productListsByAuthor[author]!!.add(product)
         } else {
-            productListsByAuthor[author] = mutableListOf(product)
+            productListsByAuthor[author] = CopyOnWriteArrayList<Product>().apply { add(product) }
         }
     }
 
@@ -107,11 +112,11 @@ class ProductsController {
     }
 
     @GetMapping("products/all/{author}/{id}")
-    fun getById(@PathVariable author: String, @PathVariable id: Int): Product{
+    fun getById(@PathVariable author: String, @PathVariable id: Int): Product {
         val itemsByAuthor = productListsByAuthor[author] ?: throw NoAuthorException(author)
 
         return itemsByAuthor.firstOrNull { it.id == id.toString() }
-                ?: throw NotFoundedException(id.toString(), "Product not founded $id")
+            ?: throw NotFoundedException(id.toString(), "Product not founded $id")
     }
 
     @ExceptionHandler(NotFoundedException::class)
@@ -123,18 +128,18 @@ class ProductsController {
 }
 
 open class NotFoundedException(
-        private val notFounded: String,
-        private val errorMessage: String
+    private val notFounded: String,
+    private val errorMessage: String
 ) : RuntimeException(errorMessage) {
 
     data class Response(
-            val name: String,
-            val message: String
+        val name: String,
+        val message: String
     )
 
     fun toResponse() = Response(notFounded, errorMessage)
 }
 
 class NoAuthorException(
-        name: String
+    name: String
 ) : NotFoundedException(name, "Author not found $name")
