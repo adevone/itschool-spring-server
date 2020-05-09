@@ -10,7 +10,7 @@ data class Order(
     /**
      * @return [items] mapped to List<[FullOrder.Item]> with [Product]s returned by
      * passing [Item.productId] to [findProductById].
-     * If [findProductById] returned null for [Item] form [items] than this item will not be in result list.
+     * If [findProductById] returned null for [Item] from [items] than this item will not be presented in result list.
      */
     inline fun toFullOrder(findProductById: (String) -> Product?): FullOrder {
         val fullOrderItems = items.mapNotNull { item ->
