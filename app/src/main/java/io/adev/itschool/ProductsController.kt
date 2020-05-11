@@ -1,5 +1,6 @@
 package io.adev.itschool
 
+import io.adev.itschool.data.KolyvanovArtemDataset
 import io.adev.itschool.data.SukharevAntonDataset
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -29,7 +30,8 @@ data class Product(
 typealias Money = Double
 
 private val productsListByAuthorCategory = mapOf(
-    "Sukharev" to SukharevAntonDataset().getData()
+        "Sukharev" to SukharevAntonDataset().getData(),
+        "Kolyvanov" to KolyvanovArtemDataset().getData()
 )
 
 val productListsByAuthor = ConcurrentHashMap<String, CopyOnWriteArrayList<Product>>(
