@@ -31,7 +31,8 @@ typealias Money = Double
 
 private val productsListByAuthorCategory = mapOf(
         "Sukharev" to SukharevAntonDataset().getData(),
-        "Kolyvanov" to KolyvanovArtemDataset().getData()
+        "Kolyvanov" to KolyvanovArtemDataset().getData(),
+        "Bondarenko" to BondarenkoYuryDataset().getData()
 )
 
 val productListsByAuthor = ConcurrentHashMap<String, CopyOnWriteArrayList<Product>>(
