@@ -51,7 +51,7 @@ private val productsListByAuthorCategory = mapOf(
         "Kolyvanov" to KolyvanovArtemDataset().getData()
 )
 
-val productListsByAuthor = ConcurrentHashMap<String, CopyOnWriteArrayList<Product>>(
+val productListsByAuthor = ConcurrentHashMap(
     mapOf(
         "default" to CopyOnWriteArrayList(
             listOf(

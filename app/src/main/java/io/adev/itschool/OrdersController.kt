@@ -74,7 +74,7 @@ class OrdersController {
         if (ordersByAuthor.containsKey(author)) {
             ordersByAuthor[author]!!.add(order)
         } else {
-            ordersByAuthor[author] = CopyOnWriteArrayList()
+            ordersByAuthor[author] = CopyOnWriteArrayList(listOf(order))
         }
     }
 
