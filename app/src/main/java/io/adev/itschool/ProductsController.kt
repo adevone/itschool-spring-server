@@ -8,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 data class Category(
     val name: String,
-    val products: List<Product>
+    val products: MutableList<Product>
 )
 
 data class Product(
@@ -29,7 +29,7 @@ data class Product(
 typealias Money = Double
 
 private val productsListByAuthorCategory = mapOf(
-    "Sukharev" to SukharevAntonDataset().getData()
+    "Sukharev" to SukharevAntonDataset()
 )
 
 val productListsByAuthor = ConcurrentHashMap<String, CopyOnWriteArrayList<Product>>(
@@ -87,7 +87,7 @@ class ProductsController {
 
     @GetMapping("products/allWithCategories/{author}/")
     fun allWithCategories(@PathVariable author: String): List<Category> {
-        return productsListByAuthorCategory[author] ?: throw NoAuthorException(author)
+        return productsListByAuthorCategory[author]?.data ?: throw NoAuthorException(author)
     }
 
     @PostMapping("products/all/{author}/")
@@ -96,6 +96,17 @@ class ProductsController {
             productListsByAuthor[author]!!.add(product)
         } else {
             productListsByAuthor[author] = CopyOnWriteArrayList<Product>().apply { add(product) }
+        }
+    }
+
+    @PostMapping("products/allWithCategories/{author}/{category}")
+    fun addProductToCategory(@PathVariable author: String, @PathVariable category: String, @RequestBody product: Product) {
+        val dataset = productsListByAuthorCategory[author] ?: throw NoAuthorException(author)
+
+        if (dataset.hasCategory(category)) {
+            dataset.addProduct(category, product)
+        } else {
+            dataset.createCategory(category, mutableListOf(product))
         }
     }
 
