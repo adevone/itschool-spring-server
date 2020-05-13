@@ -1,5 +1,7 @@
 package io.adev.itschool
 
+import RakipovIlyaDataset
+import io.adev.itschool.data.BondarenkoYuryDataset
 import io.adev.itschool.data.KolyvanovArtemDataset
 import io.adev.itschool.data.SukharevAntonDataset
 import io.adev.itschool.data.ZinevichYanDataset
@@ -48,7 +50,9 @@ typealias Money = Double
 
 private val productsListByAuthorCategory = mapOf(
         "Sukharev" to SukharevAntonDataset().getData(),
-        "Kolyvanov" to KolyvanovArtemDataset().getData()
+        "Kolyvanov" to KolyvanovArtemDataset().getData(),
+        "Bondarenko" to BondarenkoYuryDataset().getData(),
+        "Rakipov" to RakipovIlyaDataset().getData()
 )
 
 val productListsByAuthor = ConcurrentHashMap(
