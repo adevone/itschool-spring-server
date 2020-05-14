@@ -1,3 +1,5 @@
+package io.adev.itschool.data
+
 import io.adev.itschool.Category
 import io.adev.itschool.Product
 
