@@ -1,10 +1,6 @@
 package io.adev.itschool
 
-import io.adev.itschool.data.BondarenkoYuryDataset
-import io.adev.itschool.data.KolyvanovArtemDataset
-import io.adev.itschool.data.RakipovIlyaDataset
-import io.adev.itschool.data.SukharevAntonDataset
-import io.adev.itschool.data.ZinevichYanDataset
+import io.adev.itschool.data.*
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.util.concurrent.ConcurrentHashMap
@@ -15,19 +11,6 @@ data class Category(
     val products: List<Product>
 )
 
-
-
-data class SubCategory(
-    val name: String,
-    val mainCategory: MainCategory
-)
-
-data class MainCategory(
-    val name: String
-){
-    constructor() : this("")
-}
-
 data class Product(
     val id: String,
     val name: String,
@@ -37,9 +20,6 @@ data class Product(
     val imageUrl: String,
     val attributes: List<Attribute>
 ) {
-    var category: SubCategory? = null
-    val otherPhotos: MutableList<String> = mutableListOf()
-
     data class Attribute(
         val name: String,
         val value: String
@@ -58,7 +38,7 @@ private val productsListByAuthorCategory = mapOf(
 val productListsByAuthor = ConcurrentHashMap(
     mapOf(
         "default" to CopyOnWriteArrayList(
-            listOf(
+            mutableListOf(
                 Product(
                     id = "1",
                     name = "Mrkvkv",
@@ -97,7 +77,14 @@ val productListsByAuthor = ConcurrentHashMap(
                 )
             )
         ),
+        "Zinevich" to CopyOnWriteArrayList(
+            ZinevichYanDataset().getData().map { it.product }.toMutableList()
+        )
+    )
+)
 
+val productListWithCategoryAndPhoto = ConcurrentHashMap(
+    mapOf(
         "Zinevich" to ZinevichYanDataset().getData()
     )
 )
@@ -134,6 +121,21 @@ class ProductsController {
             else
                 null
         }.take(maxSize)
+    }
+
+    @GetMapping("products/withCategoryAndPhoto/all/{author}")
+    fun getWithCategoryAndPhoto(@PathVariable author: String): List<ProductAnswer>{
+        val items = productListWithCategoryAndPhoto[author] ?: throw NoAuthorException(author)
+
+        return items.map { it.mapToProductAnswer() }
+    }
+
+    @GetMapping("products/withCategoryAndPhoto/all/{author}/{id}")
+    fun getByIdWithCategoryAndPhoto(@PathVariable author: String, @PathVariable id: String): ProductAnswer?{
+        val items = productListWithCategoryAndPhoto[author] ?: throw NoAuthorException(author)
+
+
+        return items.firstOrNull { it.product.id == id }?.mapToProductAnswer()
     }
 
     @GetMapping("products/all/{author}/{id}")
