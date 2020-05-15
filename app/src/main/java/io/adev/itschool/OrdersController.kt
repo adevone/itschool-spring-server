@@ -80,7 +80,7 @@ class OrdersController {
 
     @GetMapping("orders/all/{author}")
     fun all(@PathVariable author: String): List<FullOrder> {
-        val products: List<Product> = productListsByAuthor[author] ?: emptyList()
+        val products: List<Product> = productsListByAuthorCategory[author]?.flatMap { it.products } ?: emptyList()
         val orders: List<Order> = ordersByAuthor[author] ?: emptyList()
         val fullOrders = orders.map { order ->
             order.toFullOrder(
