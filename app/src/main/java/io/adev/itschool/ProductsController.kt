@@ -8,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 data class Category(
     val name: String,
-    val products: MutableList<Product>
+    val products: CopyOnWriteArrayList<Product>
 )
 
 data class Product(
@@ -86,7 +86,7 @@ class ProductsController {
         if (dataset.hasCategory(category)) {
             dataset.addProduct(category, product)
         } else {
-            dataset.createCategory(category, mutableListOf(product))
+            dataset.createCategory(category, CopyOnWriteArrayList(listOf(product)))
         }
     }
 
