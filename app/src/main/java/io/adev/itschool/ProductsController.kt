@@ -116,6 +116,17 @@ class ProductsController {
         }
     }
 
+    @GetMapping("products/allWithCategories/{author}/{category}")
+    fun getCategory(@PathVariable author: String, @PathVariable category: String, @RequestBody product: Product) {
+        val dataset = productsListByAuthorCategory[author] ?: throw NoAuthorException(author)
+
+        if (dataset.hasCategory(category)) {
+            dataset.addProduct(category, product)
+        } else {
+            dataset.createCategory(category, mutableListOf(product))
+        }
+    }
+
     @GetMapping("products/hints/{author}/{query}/{maxSize}")
     fun getHints(@PathVariable author: String, @PathVariable query: String, @PathVariable maxSize: Int): List<String> {
         val itemsByAuthor = productListsByAuthor[author] ?: throw NoAuthorException(author)

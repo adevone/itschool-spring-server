@@ -4,8 +4,8 @@ import io.adev.itschool.Category
 import io.adev.itschool.Product
 
 class KolyvanovArtemDataset: BaseDataset() {
-    init {
-        data = mutableListOf(
+
+        override var data = mutableListOf(
                 Category("Столы",
                         mutableListOf(
                                 Product(
@@ -87,5 +87,4 @@ class KolyvanovArtemDataset: BaseDataset() {
                         )
                 )
         )
-    }
 }
