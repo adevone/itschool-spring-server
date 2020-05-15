@@ -3,12 +3,11 @@ package io.adev.itschool.data
 import io.adev.itschool.Category
 import io.adev.itschool.Product
 
-class RakipovIlyaDataset {
-    fun getData(): List<Category> {
-        return listOf(
+class RakipovIlyaDataset: BaseDataset() {
+        override var data = mutableListOf(
             Category(
                 "Акустические гитары",
-                listOf(
+                mutableListOf(
                     Product(
                         id = "1",
                         name = "FENDER CD-60S DREAD NAT WN",
@@ -286,7 +285,7 @@ class RakipovIlyaDataset {
             ),
             Category(
                 "Электрогитары",
-                listOf(
+                mutableListOf(
                     Product(
                         id = "6",
                         name = "FENDER SQUIER BULLET STRAT HT HSS BLK",
@@ -539,7 +538,7 @@ class RakipovIlyaDataset {
             ),
             Category(
                 "Гитарное усиление",
-                listOf(
+                mutableListOf(
                     Product(
                         id = "10",
                         name = "MARSHALL MS-2 MICRO AMP (BLACK)",
@@ -626,7 +625,7 @@ class RakipovIlyaDataset {
             ),
             Category(
                 "Укулеле",
-                listOf(
+                mutableListOf(
                     Product(
                         id = "13",
                         name = "FLIGHT NUS 310",
@@ -762,5 +761,4 @@ class RakipovIlyaDataset {
                 )
             )
         )
-    }
 }

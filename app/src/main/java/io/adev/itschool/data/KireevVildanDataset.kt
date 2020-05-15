@@ -3,12 +3,10 @@ package io.adev.itschool.data
 import io.adev.itschool.Category
 import io.adev.itschool.Product
 
-class KireevVildanDataset {
-
-    fun getData(): List<Category> {
-        return listOf(
+class KireevVildanDataset: BaseDataset() {
+        override var data = mutableListOf(
             Category("Нарезное",
-                listOf(
+                mutableListOf(
                     Product(
                         id = "1",
                         name = "Карабин Сайга-9 кал. 9х19, исп. 02",
@@ -131,7 +129,7 @@ class KireevVildanDataset {
                 )
             ),
             Category("Гладкоствольное",
-                listOf(
+                mutableListOf(
                     Product(
                         id = "6",
                         name = "Карабин КО ВССЛ (Ланкастер)",
@@ -223,7 +221,7 @@ class KireevVildanDataset {
                 )
             ),
             Category("Травматическое",
-                listOf(
+                mutableListOf(
                     Product(
                         id = "10",
                         name = "Пистолет ООП МР-80-13Т",
@@ -281,7 +279,7 @@ class KireevVildanDataset {
                 )
             ),
             Category("Охолощенное",
-                listOf(
+                mutableListOf(
                     Product(
                         id = "13",
                         name = "Автомат Калашникова ОС-АК103",
@@ -339,7 +337,7 @@ class KireevVildanDataset {
                 )
             ),
             Category("Патроны",
-                listOf(
+                mutableListOf(
                     Product(
                         id = "16",
                         name = "Патрон пистолетный УПЗ (ТПЗ) 9х19",
@@ -401,5 +399,4 @@ class KireevVildanDataset {
                 )
             )
         )
-    }
 } 

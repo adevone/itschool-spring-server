@@ -3,11 +3,10 @@ package io.adev.itschool.data
 import io.adev.itschool.Category
 import io.adev.itschool.Product
 
-class BondarenkoYuryDataset {
-    fun getData(): List<Category> {
-        return listOf(
+class BondarenkoYuryDataset: BaseDataset() {
+        override var data =  mutableListOf(
                 Category("Смартфоны",
-                        listOf(
+                        mutableListOf(
                                 Product(
                                         id = "1",
                                         name = "Samsung Galaxy M21",
@@ -146,7 +145,7 @@ class BondarenkoYuryDataset {
                         )
                 ),
                 Category("Ноутбуки",
-                        listOf(
+                        mutableListOf(
                                 Product(
                                         id = "6",
                                         name = "ASUS Laptop 15 X509",
@@ -266,7 +265,7 @@ class BondarenkoYuryDataset {
                         )
                 ),
                 Category("Планшеты",
-                        listOf(
+                        mutableListOf(
                                 Product(
                                         id = "10",
                                         name = "Samsung Galaxy Tab A 10.1",
@@ -360,7 +359,7 @@ class BondarenkoYuryDataset {
                         )
                 ),
                 Category("Комплектующие для ПК",
-                        listOf(
+                        mutableListOf(
                                 Product(
                                         id = "13",
                                         name = "GIGABYTE GeForce GTX 1660 SUPER",
@@ -450,7 +449,7 @@ class BondarenkoYuryDataset {
                         )
                 ),
                 Category("Аксессуары для смартфонов",
-                        listOf(
+                        mutableListOf(
                                 Product(
                                         id = "16",
                                         name = "Чехол для Apple iPhone 11 Pro Max",
@@ -524,5 +523,4 @@ class BondarenkoYuryDataset {
                         )
                 )
         )
-    }
 }

@@ -3,12 +3,11 @@ package io.adev.itschool.data
 import io.adev.itschool.Category
 import io.adev.itschool.Product
 
-class ShumilinPavelDataset {
-    fun getData(): List<Category> {
-        return listOf(
+class ShumilinPavelDataset: BaseDataset() {
+        override var data = mutableListOf(
             Category(
                 "Посуда",
-                listOf(
+                mutableListOf(
                     Product(
                         id = "1",
                         name = "Кружка \"Добрый кот\"",
@@ -97,7 +96,7 @@ class ShumilinPavelDataset {
             ),
             Category(
                 "Подушки",
-                listOf(
+                mutableListOf(
                     Product(
                         id = "5",
                         name = "Декоративная подушка \"Кот Уголь\"",
@@ -180,7 +179,7 @@ class ShumilinPavelDataset {
             ),
             Category(
                 "Сувениры",
-                listOf(
+                mutableListOf(
                     Product(
                         id = "8",
                         name = "Котенок на воздушном шаре",
@@ -262,5 +261,4 @@ class ShumilinPavelDataset {
                 )
             )
         )
-    }
 } 

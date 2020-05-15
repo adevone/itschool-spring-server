@@ -8,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 data class Category(
     val name: String,
-    val products: List<Product>
+    val products: MutableList<Product>
 )
 
 data class Product(
@@ -28,13 +28,13 @@ data class Product(
 
 typealias Money = Double
 
-val productsListByAuthorCategory: Map<String, List<Category>> = mapOf(
-    "Sukharev" to SukharevAntonDataset().getData(),
-    "Kolyvanov" to KolyvanovArtemDataset().getData(),
-    "Bondarenko" to BondarenkoYuryDataset().getData(),
-    "Rakipov" to RakipovIlyaDataset().getData(),
-    "Kireev" to KireevVildanDataset().getData(),
-    "Shumilin" to ShumilinPavelDataset().getData()
+val productsListByAuthorCategory = mapOf(
+    "Sukharev" to SukharevAntonDataset(),
+    "Kolyvanov" to KolyvanovArtemDataset(),
+    "Bondarenko" to BondarenkoYuryDataset(),
+    "Rakipov" to RakipovIlyaDataset(),
+    "Kireev" to KireevVildanDataset(),
+    "Shumilin" to ShumilinPavelDataset()
 )
 
 val productListWithCategoryAndPhoto = ConcurrentHashMap(
@@ -52,7 +52,7 @@ val productListsByAuthor: ConcurrentHashMap<String, CopyOnWriteArrayList<Product
         }
         .toMap() + productsListByAuthorCategory
         .map { (author, categories) ->
-            author to CopyOnWriteArrayList(categories.flatMap { it.products })
+            author to CopyOnWriteArrayList(categories.data.flatMap { it.products })
         }
         .toMap()
 )
@@ -67,7 +67,7 @@ class ProductsController {
 
     @GetMapping("products/allWithCategories/{author}/")
     fun allWithCategories(@PathVariable author: String): List<Category> {
-        return productsListByAuthorCategory[author] ?: throw NoAuthorException(author)
+        return productsListByAuthorCategory[author]?.data ?: throw NoAuthorException(author)
     }
 
     @PostMapping("products/all/{author}/")
@@ -77,6 +77,24 @@ class ProductsController {
         } else {
             productListsByAuthor[author] = CopyOnWriteArrayList(listOf(product))
         }
+    }
+
+    @PostMapping("products/allWithCategories/{author}/{category}")
+    fun addProductToCategory(@PathVariable author: String, @PathVariable category: String, @RequestBody product: Product) {
+        val dataset = productsListByAuthorCategory[author] ?: throw NoAuthorException(author)
+
+        if (dataset.hasCategory(category)) {
+            dataset.addProduct(category, product)
+        } else {
+            dataset.createCategory(category, mutableListOf(product))
+        }
+    }
+
+    @GetMapping("products/allWithCategories/{author}/{category}")
+    fun getCategory(@PathVariable author: String, @PathVariable category: String): Category {
+        val dataset = productsListByAuthorCategory[author] ?: throw NoAuthorException(author)
+
+        return dataset.getCategory(category) ?: throw NotFoundedException(category, "There is no such $category")
     }
 
     @GetMapping("products/hints/{author}/{query}/{maxSize}")

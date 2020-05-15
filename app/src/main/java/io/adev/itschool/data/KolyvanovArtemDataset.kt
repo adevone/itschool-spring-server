@@ -3,11 +3,11 @@ package io.adev.itschool.data
 import io.adev.itschool.Category
 import io.adev.itschool.Product
 
-class KolyvanovArtemDataset {
-    fun getData(): List<Category>{
-        return listOf(
+class KolyvanovArtemDataset: BaseDataset() {
+
+        override var data = mutableListOf(
                 Category("Столы",
-                        listOf(
+                        mutableListOf(
                                 Product(
                                         id = "1",
                                         name = "Стол amfibia",
@@ -47,7 +47,7 @@ class KolyvanovArtemDataset {
                         )
                 ),
                 Category("Стулья",
-                        listOf(
+                        mutableListOf(
                                 Product(
                                         id = "3",
                                         name = "Стул amfibia",
@@ -87,5 +87,4 @@ class KolyvanovArtemDataset {
                         )
                 )
         )
-    }
 }
