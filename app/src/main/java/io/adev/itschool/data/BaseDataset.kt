@@ -11,10 +11,10 @@ abstract class BaseDataset {
     fun addProduct(category: String, product: Product) {
         data.firstOrNull {
             it.name == category
-        }?.products?.add((product)) ?: data.add(Category(category, mutableListOf(product)))
+        }?.products?.add(product) ?: data.add(Category(category, mutableListOf(product)))
     }
 
-    lateinit var data: MutableList<Category>
+    abstract var data: MutableList<Category>
 
     fun hasCategory(category: String): Boolean {
         val categoryNames = getCategoryNames()
