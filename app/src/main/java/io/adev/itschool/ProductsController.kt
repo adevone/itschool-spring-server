@@ -4,6 +4,7 @@ import io.adev.itschool.data.BondarenkoYuryDataset
 import io.adev.itschool.data.KolyvanovArtemDataset
 import io.adev.itschool.data.RakipovIlyaDataset
 import io.adev.itschool.data.SukharevAntonDataset
+import io.adev.itschool.data.KireevVildanDataset
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.util.concurrent.ConcurrentHashMap
@@ -35,7 +36,8 @@ private val productsListByAuthorCategory = mapOf(
         "Sukharev" to SukharevAntonDataset().getData(),
         "Kolyvanov" to KolyvanovArtemDataset().getData(),
         "Bondarenko" to BondarenkoYuryDataset().getData(),
-        "Rakipov" to RakipovIlyaDataset().getData()
+        "Rakipov" to RakipovIlyaDataset().getData(),
+        "Kireev" to KireevVildanDataset().getData()
 )
 
 val productListsByAuthor = ConcurrentHashMap<String, CopyOnWriteArrayList<Product>>(
