@@ -103,7 +103,7 @@ class ShumilinPavelDataset: BaseDataset() {
                         price = 1800.0,
                         discountPercent = 10,
                         description = "Декоративная подушка в виде кота",
-                        imageUrl = "http://mykotomania.ru/wp-content/uploads/2020/03/400.jpg",
+                        imageUrl = "https://static-eu.insales.ru/images/products/1/906/174113674/large_A131-2.jpg",
                         attributes = listOf(
                             Product.Attribute(
                                 name = "Наполнитель",
