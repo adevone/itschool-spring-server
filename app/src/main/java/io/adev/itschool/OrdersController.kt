@@ -5,6 +5,10 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
 data class Order(
+    val userFirstName: String,
+    val userLastName: String,
+    val userPhone: String,
+    val paymentType: PaymentType,
     val items: List<Item>
 ) {
     /**
@@ -16,7 +20,13 @@ data class Order(
         val fullOrderItems = items.mapNotNull { item ->
             item.toFullOrderItem(findProductById)
         }
-        return FullOrder(fullOrderItems)
+        return FullOrder(
+            userFirstName,
+            userLastName,
+            userPhone,
+            paymentType,
+            fullOrderItems
+        )
     }
 
     data class Item(
@@ -35,9 +45,17 @@ data class Order(
                 null
         }
     }
+
+    enum class PaymentType {
+        CashOnReceiving, CardOnReceiving,
+    }
 }
 
 data class FullOrder(
+    val userFirstName: String,
+    val userLastName: String,
+    val userPhone: String,
+    val paymentType: Order.PaymentType,
     val items: List<Item>
 ) {
     data class Item(
@@ -62,9 +80,9 @@ class OrdersController {
 
     @GetMapping("orders/all/{author}/")
     fun all(@PathVariable author: String): List<FullOrder> {
-        val products = productListsByAuthor[author] ?: emptyList()
-        val orders = ordersByAuthor[author] ?: emptyList()
-        val fullOrders = orders.mapNotNull { order ->
+        val products: List<Product> = productListsByAuthor[author] ?: emptyList()
+        val orders: List<Order> = ordersByAuthor[author] ?: emptyList()
+        val fullOrders = orders.map { order ->
             order.toFullOrder(
                 findProductById = { productId ->
                     val product = products.find { product ->

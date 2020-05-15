@@ -4,8 +4,7 @@ import io.adev.itschool.Category
 import io.adev.itschool.Product
 
 class SukharevAntonDataset: BaseDataset() {
-    init {
-         data = mutableListOf(
+         override var data = mutableListOf(
             Category(
                 "Ван Гог",
                 mutableListOf(
@@ -193,5 +192,4 @@ class SukharevAntonDataset: BaseDataset() {
                 products = mutableListOf()
             )
         )
-    }
 }
