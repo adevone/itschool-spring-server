@@ -37,19 +37,24 @@ val productsListByAuthorCategory: Map<String, List<Category>> = mapOf(
     "Shumilin" to ShumilinPavelDataset().getData()
 )
 
-val productListsByAuthor = ConcurrentHashMap(
-    mapOf(
-        "default" to CopyOnWriteArrayList(DefaultDataset().getData()),
-        "Zinevich" to CopyOnWriteArrayList(
-            ZinevichYanDataset().getData().map { it.product }.toMutableList()
-        )
-    )
-)
-
 val productListWithCategoryAndPhoto = ConcurrentHashMap(
     mapOf(
         "Zinevich" to ZinevichYanDataset().getData()
     )
+)
+
+val productListsByAuthor: ConcurrentHashMap<String, CopyOnWriteArrayList<Product>> = ConcurrentHashMap(
+    mapOf(
+        "default" to CopyOnWriteArrayList(DefaultDataset().getData())
+    ) + productListWithCategoryAndPhoto
+        .map { (author, productsWithProto) ->
+            author to CopyOnWriteArrayList(productsWithProto.map { it.product })
+        }
+        .toMap() + productsListByAuthorCategory
+        .map { (author, categories) ->
+            author to CopyOnWriteArrayList(categories.flatMap { it.products })
+        }
+        .toMap()
 )
 
 @RestController
@@ -87,14 +92,14 @@ class ProductsController {
     }
 
     @GetMapping("products/withCategoryAndPhoto/all/{author}")
-    fun getWithCategoryAndPhoto(@PathVariable author: String): List<ProductAnswer>{
+    fun getWithCategoryAndPhoto(@PathVariable author: String): List<ProductAnswer> {
         val items = productListWithCategoryAndPhoto[author] ?: throw NoAuthorException(author)
 
         return items.map { it.mapToProductAnswer() }
     }
 
     @GetMapping("products/withCategoryAndPhoto/all/{author}/{id}")
-    fun getByIdWithCategoryAndPhoto(@PathVariable author: String, @PathVariable id: String): ProductAnswer?{
+    fun getByIdWithCategoryAndPhoto(@PathVariable author: String, @PathVariable id: String): ProductAnswer? {
         val items = productListWithCategoryAndPhoto[author] ?: throw NoAuthorException(author)
 
 
