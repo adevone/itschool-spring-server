@@ -43,6 +43,8 @@ val productListsByAuthor = ConcurrentHashMap(
         "Zinevich" to CopyOnWriteArrayList(
             ZinevichYanDataset().getData().map { it.product }.toMutableList()
         )
+    )
+)
 
 val productListWithCategoryAndPhoto = ConcurrentHashMap(
     mapOf(
