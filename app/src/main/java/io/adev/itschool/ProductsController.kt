@@ -28,7 +28,7 @@ data class Product(
 
 typealias Money = Double
 
-private val productsListByAuthorCategory: Map<String, List<Category>> = mapOf(
+val productsListByAuthorCategory: Map<String, List<Category>> = mapOf(
     "Sukharev" to SukharevAntonDataset().getData(),
     "Kolyvanov" to KolyvanovArtemDataset().getData(),
     "Bondarenko" to BondarenkoYuryDataset().getData(),
