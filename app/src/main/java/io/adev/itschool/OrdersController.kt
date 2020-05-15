@@ -74,11 +74,11 @@ class OrdersController {
         if (ordersByAuthor.containsKey(author)) {
             ordersByAuthor[author]!!.add(order)
         } else {
-            ordersByAuthor[author] = CopyOnWriteArrayList()
+            ordersByAuthor[author] = CopyOnWriteArrayList(listOf(order))
         }
     }
 
-    @GetMapping("orders/all/{author}/")
+    @GetMapping("orders/all/{author}")
     fun all(@PathVariable author: String): List<FullOrder> {
         val products: List<Product> = productListsByAuthor[author] ?: emptyList()
         val orders: List<Order> = ordersByAuthor[author] ?: emptyList()
