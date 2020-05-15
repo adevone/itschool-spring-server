@@ -37,9 +37,18 @@ val productsListByAuthorCategory: Map<String, List<Category>> = mapOf(
     "Shumilin" to ShumilinPavelDataset().getData()
 )
 
-val productListsByAuthor: ConcurrentHashMap<String, CopyOnWriteArrayList<Product>> = ConcurrentHashMap(
+val productListsByAuthor = ConcurrentHashMap(
     mapOf(
-        "default" to CopyOnWriteArrayList(DefaultDataset().getData())
+        "default" to CopyOnWriteArrayList(DefaultDataset().getData()),
+        "Zinevich" to CopyOnWriteArrayList(
+            ZinevichYanDataset().getData().map { it.product }.toMutableList()
+        )
+    )
+)
+
+val productListWithCategoryAndPhoto = ConcurrentHashMap(
+    mapOf(
+        "Zinevich" to ZinevichYanDataset().getData()
     )
 )
 
@@ -77,12 +86,27 @@ class ProductsController {
         }.take(maxSize)
     }
 
+    @GetMapping("products/withCategoryAndPhoto/all/{author}")
+    fun getWithCategoryAndPhoto(@PathVariable author: String): List<ProductAnswer>{
+        val items = productListWithCategoryAndPhoto[author] ?: throw NoAuthorException(author)
+
+        return items.map { it.mapToProductAnswer() }
+    }
+
+    @GetMapping("products/withCategoryAndPhoto/all/{author}/{id}")
+    fun getByIdWithCategoryAndPhoto(@PathVariable author: String, @PathVariable id: String): ProductAnswer?{
+        val items = productListWithCategoryAndPhoto[author] ?: throw NoAuthorException(author)
+
+
+        return items.firstOrNull { it.product.id == id }?.mapToProductAnswer()
+    }
+
     @GetMapping("products/all/{author}/{id}")
-    fun getById(@PathVariable author: String, @PathVariable id: Int): Product {
+    fun getById(@PathVariable author: String, @PathVariable id: String): Product {
         val itemsByAuthor = productListsByAuthor[author] ?: throw NoAuthorException(author)
 
-        return itemsByAuthor.firstOrNull { it.id == id.toString() }
-            ?: throw NotFoundedException(id.toString(), "Product not founded $id")
+        return itemsByAuthor.firstOrNull { it.id == id }
+            ?: throw NotFoundedException(id, "Product not founded $id")
     }
 
     @ExceptionHandler(NotFoundedException::class)
