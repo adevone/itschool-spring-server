@@ -117,14 +117,10 @@ class ProductsController {
     }
 
     @GetMapping("products/allWithCategories/{author}/{category}")
-    fun getCategory(@PathVariable author: String, @PathVariable category: String, @RequestBody product: Product) {
+    fun getCategory(@PathVariable author: String, @PathVariable category: String): Category {
         val dataset = productsListByAuthorCategory[author] ?: throw NoAuthorException(author)
 
-        if (dataset.hasCategory(category)) {
-            dataset.addProduct(category, product)
-        } else {
-            dataset.createCategory(category, mutableListOf(product))
-        }
+        return dataset.getCategory(category) ?: throw NotFoundedException(category, "There is no such $category")
     }
 
     @GetMapping("products/hints/{author}/{query}/{maxSize}")

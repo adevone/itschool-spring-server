@@ -8,6 +8,12 @@ abstract class BaseDataset {
         return data.map{ it.name }
     }
 
+    fun getCategory(category: String): Category? {
+        return data.firstOrNull {
+            it.name == category
+        }
+    }
+
     fun addProduct(category: String, product: Product) {
         data.firstOrNull {
             it.name == category
