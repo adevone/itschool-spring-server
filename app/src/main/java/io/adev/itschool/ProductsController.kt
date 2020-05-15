@@ -1,9 +1,6 @@
 package io.adev.itschool
 
-import io.adev.itschool.data.BondarenkoYuryDataset
-import io.adev.itschool.data.KolyvanovArtemDataset
-import io.adev.itschool.data.RakipovIlyaDataset
-import io.adev.itschool.data.SukharevAntonDataset
+import io.adev.itschool.data.*
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.util.concurrent.ConcurrentHashMap
@@ -31,56 +28,33 @@ data class Product(
 
 typealias Money = Double
 
-private val productsListByAuthorCategory = mapOf(
+val productsListByAuthorCategory = mapOf(
     "Sukharev" to SukharevAntonDataset(),
     "Kolyvanov" to KolyvanovArtemDataset(),
     "Bondarenko" to BondarenkoYuryDataset(),
-    "Rakipov" to RakipovIlyaDataset()
+    "Rakipov" to RakipovIlyaDataset(),
+    "Kireev" to KireevVildanDataset(),
+    "Shumilin" to ShumilinPavelDataset()
 )
 
-val productListsByAuthor = ConcurrentHashMap<String, CopyOnWriteArrayList<Product>>(
+val productListWithCategoryAndPhoto = ConcurrentHashMap(
     mapOf(
-        "default" to CopyOnWriteArrayList(
-            listOf(
-                Product(
-                    id = "1",
-                    name = "Mrkvkv",
-                    price = 123.5,
-                    discountPercent = 15,
-                    description = "Морковка немытая",
-                    imageUrl = "https://i.pinimg.com/originals/3e/50/d3/3e50d3c1231de7f7105e017a2ee85874.jpg",
-                    attributes = listOf(
-                        Product.Attribute(
-                            name = "Качество",
-                            value = "Наивысшее"
-                        ),
-                        Product.Attribute(
-                            name = "Производитель",
-                            value = "The Grandma Inc."
-                        )
-                    )
-                ),
-                Product(
-                    id = "2",
-                    name = "Kotoshkv",
-                    price = 312.7,
-                    discountPercent = 25,
-                    description = "Картошка белая",
-                    imageUrl = "https://memepedia.ru/wp-content/uploads/2019/07/chilipizdrik-14-360x270.jpg",
-                    attributes = listOf(
-                        Product.Attribute(
-                            name = "Качество",
-                            value = "Наивысшайшее"
-                        ),
-                        Product.Attribute(
-                            name = "Производитель",
-                            value = "The Grandma Inc."
-                        )
-                    )
-                )
-            )
-        )
+        "Zinevich" to ZinevichYanDataset().getData()
     )
+)
+
+val productListsByAuthor: ConcurrentHashMap<String, CopyOnWriteArrayList<Product>> = ConcurrentHashMap(
+    mapOf(
+        "default" to CopyOnWriteArrayList(DefaultDataset().getData())
+    ) + productListWithCategoryAndPhoto
+        .map { (author, productsWithProto) ->
+            author to CopyOnWriteArrayList(productsWithProto.map { it.product })
+        }
+        .toMap() + productsListByAuthorCategory
+        .map { (author, categories) ->
+            author to CopyOnWriteArrayList(categories.data.flatMap { it.products })
+        }
+        .toMap()
 )
 
 @RestController
@@ -101,7 +75,7 @@ class ProductsController {
         if (productListsByAuthor.containsKey(author)) {
             productListsByAuthor[author]!!.add(product)
         } else {
-            productListsByAuthor[author] = CopyOnWriteArrayList<Product>().apply { add(product) }
+            productListsByAuthor[author] = CopyOnWriteArrayList(listOf(product))
         }
     }
 
@@ -135,12 +109,27 @@ class ProductsController {
         }.take(maxSize)
     }
 
+    @GetMapping("products/withCategoryAndPhoto/all/{author}")
+    fun getWithCategoryAndPhoto(@PathVariable author: String): List<ProductAnswer> {
+        val items = productListWithCategoryAndPhoto[author] ?: throw NoAuthorException(author)
+
+        return items.map { it.mapToProductAnswer() }
+    }
+
+    @GetMapping("products/withCategoryAndPhoto/all/{author}/{id}")
+    fun getByIdWithCategoryAndPhoto(@PathVariable author: String, @PathVariable id: String): ProductAnswer? {
+        val items = productListWithCategoryAndPhoto[author] ?: throw NoAuthorException(author)
+
+
+        return items.firstOrNull { it.product.id == id }?.mapToProductAnswer()
+    }
+
     @GetMapping("products/all/{author}/{id}")
-    fun getById(@PathVariable author: String, @PathVariable id: Int): Product {
+    fun getById(@PathVariable author: String, @PathVariable id: String): Product {
         val itemsByAuthor = productListsByAuthor[author] ?: throw NoAuthorException(author)
 
-        return itemsByAuthor.firstOrNull { it.id == id.toString() }
-            ?: throw NotFoundedException(id.toString(), "Product not founded $id")
+        return itemsByAuthor.firstOrNull { it.id == id }
+            ?: throw NotFoundedException(id, "Product not founded $id")
     }
 
     @ExceptionHandler(NotFoundedException::class)
