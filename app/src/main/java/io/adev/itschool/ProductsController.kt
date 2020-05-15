@@ -4,6 +4,7 @@ import io.adev.itschool.data.BondarenkoYuryDataset
 import io.adev.itschool.data.KolyvanovArtemDataset
 import io.adev.itschool.data.RakipovIlyaDataset
 import io.adev.itschool.data.SukharevAntonDataset
+import io.adev.itschool.data.DefaultDataset
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.util.concurrent.ConcurrentHashMap
@@ -40,46 +41,7 @@ private val productsListByAuthorCategory = mapOf(
 
 val productListsByAuthor = ConcurrentHashMap<String, CopyOnWriteArrayList<Product>>(
     mapOf(
-        "default" to CopyOnWriteArrayList(
-            listOf(
-                Product(
-                    id = "1",
-                    name = "Mrkvkv",
-                    price = 123.5,
-                    discountPercent = 15,
-                    description = "Морковка немытая",
-                    imageUrl = "https://i.pinimg.com/originals/3e/50/d3/3e50d3c1231de7f7105e017a2ee85874.jpg",
-                    attributes = listOf(
-                        Product.Attribute(
-                            name = "Качество",
-                            value = "Наивысшее"
-                        ),
-                        Product.Attribute(
-                            name = "Производитель",
-                            value = "The Grandma Inc."
-                        )
-                    )
-                ),
-                Product(
-                    id = "2",
-                    name = "Kotoshkv",
-                    price = 312.7,
-                    discountPercent = 25,
-                    description = "Картошка белая",
-                    imageUrl = "https://memepedia.ru/wp-content/uploads/2019/07/chilipizdrik-14-360x270.jpg",
-                    attributes = listOf(
-                        Product.Attribute(
-                            name = "Качество",
-                            value = "Наивысшайшее"
-                        ),
-                        Product.Attribute(
-                            name = "Производитель",
-                            value = "The Grandma Inc."
-                        )
-                    )
-                )
-            )
-        )
+        "default" to CopyOnWriteArrayList(DefaultDataset.getData())
     )
 )
 
